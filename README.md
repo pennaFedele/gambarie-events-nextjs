@@ -39,7 +39,7 @@ A modern Next.js application for managing events and activities in Gambarie, fea
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/pennaFedele/gambarie-summer-events.git
+   git clone https://github.com/pennaFedele/gambarie-events-nextjs.git
    cd gambarie-events-nextjs
    ```
 

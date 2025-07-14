@@ -81,7 +81,7 @@ export const Footer = () => {
                   </Button>
                 </a>
                 <a
-                  href="https://github.com/pennaFedele/gambarie-summer-events" 
+                  href="https://github.com/pennaFedele/gambarie-events-nextjs" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1"
