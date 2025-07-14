@@ -48,12 +48,26 @@ export async function middleware(request: NextRequest) {
       .eq('role', 'admin')
       .single();
     
+    // Production debug logging
+    if (process.env.NODE_ENV === 'production') {
+      console.log('PROD Middleware - User ID:', user.id);
+      console.log('PROD Middleware - Admin query result:', adminData);
+      console.log('PROD Middleware - Admin query error:', error);
+      console.log('PROD Middleware - Environment check:', {
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET',
+        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET'
+      });
+    }
+    
     isAdmin = !!adminData && !error;
   }
 
   // Skip maintenance check for admin users - they can always access
   // But redirect them to home if they try to access maintenance page
   if (user && isAdmin) {
+    if (process.env.NODE_ENV === 'production') {
+      console.log('PROD Middleware - Admin user detected, bypassing maintenance');
+    }
     const isMaintenanceRoute = request.nextUrl.pathname === '/maintenance';
     if (isMaintenanceRoute) {
       return NextResponse.redirect(new URL('/', request.url));
