@@ -1,16 +1,8 @@
 import { CACHE_TAGS } from './events';
 
 export async function revalidateEventCache(authToken: string, tag?: string) {
-  const revalidationSecret = process.env.REVALIDATION_SECRET;
-  
-  if (!revalidationSecret) {
-    console.error('REVALIDATION_SECRET not configured');
-    return false;
-  }
-
   try {
     const url = new URL('/api/revalidate', window.location.origin);
-    url.searchParams.set('secret', revalidationSecret);
     
     if (tag) {
       url.searchParams.set('tag', tag);

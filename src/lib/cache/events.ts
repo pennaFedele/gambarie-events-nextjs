@@ -1,5 +1,6 @@
 import { unstable_cache } from 'next/cache';
 import { supabase } from '@/lib/supabase/client';
+import { getTodayInRomeTimezone } from '@/lib/utils/date';
 
 export interface Event {
   id: string;
@@ -55,8 +56,7 @@ export const CACHE_TAGS = {
 // Cache regular events
 export const getCachedEvents = unstable_cache(
   async (showPast = false, limit = 20, offset = 0): Promise<Event[]> => {
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const todayStr = getTodayInRomeTimezone();
     
     let query = supabase
       .from('events')
@@ -91,8 +91,7 @@ export const getCachedEvents = unstable_cache(
 // Cache long events
 export const getCachedLongEvents = unstable_cache(
   async (showPast = false, limit = 20, offset = 0): Promise<LongEvent[]> => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = getTodayInRomeTimezone();
     
     let query = supabase
       .from('long_events')
@@ -100,11 +99,11 @@ export const getCachedLongEvents = unstable_cache(
     
     if (showPast) {
       query = query
-        .lt('end_date', today.toISOString().split('T')[0])
+        .lt('end_date', todayStr)
         .order('end_date', { ascending: false });
     } else {
       query = query
-        .gte('start_date', today.toISOString().split('T')[0])
+        .gte('start_date', todayStr)
         .order('start_date', { ascending: true });
     }
     
@@ -123,14 +122,13 @@ export const getCachedLongEvents = unstable_cache(
 // Cache event count
 export const getCachedEventCount = unstable_cache(
   async (): Promise<number> => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = getTodayInRomeTimezone();
     
     // Count regular events
     const { count: regularCount, error: regularError } = await supabase
       .from('events')
       .select('*', { count: 'exact', head: true })
-      .gte('event_date', today.toISOString().split('T')[0]);
+      .gte('event_date', todayStr);
     
     if (regularError) throw regularError;
     
@@ -138,7 +136,7 @@ export const getCachedEventCount = unstable_cache(
     const { count: longCount, error: longError } = await supabase
       .from('long_events')
       .select('*', { count: 'exact', head: true })
-      .gte('start_date', today.toISOString().split('T')[0]);
+      .gte('start_date', todayStr);
     
     if (longError) throw longError;
     

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { getTodayInRomeTimezone } from '@/lib/utils/date';
 
 interface LongEvent {
   id: string;
@@ -44,8 +45,7 @@ export const useLongEvents = (pageSize = 20, showPast = false): UseLongEventsRet
       console.log('Using offset:', currentOffset);
       
       // Filter by date based on showPast parameter
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayStr = getTodayInRomeTimezone();
       
       let query = supabase
         .from('long_events')
@@ -53,12 +53,12 @@ export const useLongEvents = (pageSize = 20, showPast = false): UseLongEventsRet
       
       if (showPast) {
         // For past events, check if end_date is before today
-        query = query.lt('end_date', today.toISOString().split('T')[0])
+        query = query.lt('end_date', todayStr)
           .order('start_date', { ascending: false })
           .order('event_time', { ascending: false });
       } else {
         // For current/future events, check if end_date is today or after
-        query = query.gte('end_date', today.toISOString().split('T')[0])
+        query = query.gte('end_date', todayStr)
           .order('start_date', { ascending: true })
           .order('event_time', { ascending: true });
       }
@@ -110,18 +110,17 @@ export const useLongEvents = (pageSize = 20, showPast = false): UseLongEventsRet
     try {
       const currentOffset = offset + pageSize;
       
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const todayStr = getTodayInRomeTimezone();
       
       let query = supabase
         .from('long_events')
         .select('*');
       
       if (showPast) {
-        query = query.lt('end_date', today.toISOString().split('T')[0])
+        query = query.lt('end_date', todayStr)
           .order('end_date', { ascending: false });
       } else {
-        query = query.gte('start_date', today.toISOString().split('T')[0])
+        query = query.gte('start_date', todayStr)
           .order('start_date', { ascending: true });
       }
       

@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { getCachedEvents, CACHE_KEYS, CACHE_TAGS } from '@/lib/cache/events';
+import { getTodayInRomeTimezone } from '@/lib/utils/date';
 
 interface Event {
   id: string;
@@ -51,19 +52,18 @@ export const useEvents = (pageSize = 20, showPast = false): UseEventsReturn => {
       } catch (error) {
         console.warn('Cache miss, using direct Supabase call:', error);
         
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const todayStr = getTodayInRomeTimezone();
         
         let query = supabase.from('events').select('*');
         
         if (showPast) {
           query = query
-            .lt('event_date', today.toISOString().split('T')[0])
+            .lt('event_date', todayStr)
             .order('event_date', { ascending: false })
             .order('event_time', { ascending: false });
         } else {
           query = query
-            .gte('event_date', today.toISOString().split('T')[0])
+            .gte('event_date', todayStr)
             .order('event_date', { ascending: true })
             .order('event_time', { ascending: true });
         }
