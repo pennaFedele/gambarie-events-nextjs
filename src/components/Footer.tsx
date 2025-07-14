@@ -45,10 +45,6 @@ export const Footer = () => {
                 <Mail className="w-4 h-4" />
                 <span><a href="mailto:info@operatorigambarie.it" className="text-primary hover:underline transition-colors">info@operatorigambarie.it</a></span>
               </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                <span><a href="tel:+3909651816900" className="text-primary hover:underline transition-colors">+39 0965 1816900</a></span>
-              </div>
             </div>
           </div>
 
