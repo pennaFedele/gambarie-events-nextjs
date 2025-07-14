@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { EventCard } from '@/components/EventCard';
 import { LongEventCard } from '@/components/LongEventCard';
 import { EventFilters } from '@/components/EventFilters';
@@ -21,16 +21,14 @@ export function ClientHomePage() {
     events: regularEvents, 
     loading: regularLoading, 
     hasMore: regularHasMore, 
-    loadMore: regularLoadMore, 
-    refresh: regularRefresh 
+    loadMore: regularLoadMore
   } = useEvents(20, false);
   
   const { 
     events: longEvents, 
     loading: longLoading, 
     hasMore: longHasMore, 
-    loadMore: longLoadMore, 
-    refresh: longRefresh 
+    loadMore: longLoadMore
   } = useLongEvents(20, false);
 
   const currentEvents = useMemo(() => {
@@ -65,14 +63,10 @@ export function ClientHomePage() {
     });
   }, [currentEvents, selectedDate, selectedCategories, eventType]);
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setSelectedDate(undefined);
     setSelectedCategories([]);
-  };
-
-  const EventCardComponent = useMemo(() => {
-    return eventType === 'regular' ? EventCard : LongEventCard;
-  }, [eventType]);
+  }, []);
 
   return (
     <section className="py-16 bg-gradient-to-b from-primary/5 to-transparent">
@@ -102,23 +96,27 @@ export function ClientHomePage() {
             onLoadMore={currentLoadMore}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-6 lg:gap-6">
-              {filteredCurrentEvents.map((event) => (
-                <EventCardComponent
-                  key={event.id}
-                  event={{
-                    ...event,
-                    description: event.description || '',
-                    description_en: event.description_en || undefined,
-                    title_en: event.title_en || undefined,
-                    organizer_en: event.organizer_en || undefined,
-                    location_en: event.location_en || undefined,
-                    external_link: event.external_link || undefined,
-                    image_url: event.image_url || undefined,
-                    date: event.event_date,
-                    time: event.event_time
-                  }}
-                />
-              ))}
+              {eventType === 'regular'
+                ? (filteredCurrentEvents as any[]).map((event) => (
+                    <EventCard
+                      key={event.id}
+                      event={{
+                        ...event,
+                        description: event.description || '',
+                        description_en: event.description_en || undefined,
+                        title_en: event.title_en || undefined,
+                        organizer_en: event.organizer_en || undefined,
+                        location_en: event.location_en || undefined,
+                        external_link: event.external_link || undefined,
+                        image_url: event.image_url || undefined,
+                        date: event.event_date,
+                        time: event.event_time,
+                      }}
+                    />
+                  ))
+                : (filteredCurrentEvents as any[]).map((event) => (
+                    <LongEventCard key={event.id} event={event} />
+                  ))}
             </div>
           </LoadMore>
           

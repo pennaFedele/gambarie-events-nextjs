@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { getCachedEvents, getCachedEventCount } from '@/lib/cache/events';
+import { getCachedEventCount } from '@/lib/cache/events';
 import { Calendar } from 'lucide-react';
 import { ClientHomePage } from '@/components/ClientHomePage';
 

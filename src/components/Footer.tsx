@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Heart, LogIn, LogOut, User, Shield, MapPin, Mail, Phone, Github, Star } from "lucide-react";
+import { Heart, LogIn, LogOut, User, Shield, MapPin, Mail, Phone, Github } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useAdmin } from "@/hooks/useAdmin";
 import Link from "next/link";

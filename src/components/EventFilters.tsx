@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
@@ -28,7 +28,7 @@ export const EventFilters = ({
   const { t, i18n } = useTranslation();
   const [calendarOpen, setCalendarOpen] = useState(false);
 
-  const categories = [
+  const categories = useMemo(() => [
     { id: "gastronomia", label: t('admin.categories.gastronomia'), color: "bg-[hsl(var(--gastronomia))]" },
     { id: "cultura", label: t('admin.categories.cultura'), color: "bg-[hsl(var(--cultura))]" },
     { id: "musica", label: t('admin.categories.musica'), color: "bg-[hsl(var(--musica))]" },
@@ -36,19 +36,19 @@ export const EventFilters = ({
     { id: "storia", label: t('admin.categories.storia'), color: "bg-[hsl(var(--storia))]" },
     { id: "sport", label: t('admin.categories.sport'), color: "bg-[hsl(var(--sport))]" },
     { id: "arte", label: t('admin.categories.arte'), color: "bg-[hsl(var(--arte))]" }
-  ];
+  ], [t]);
 
-  const dateLocale = i18n.language === 'en' ? enUS : it;
+  const dateLocale = useMemo(() => i18n.language === 'en' ? enUS : it, [i18n.language]);
 
-  const toggleCategory = (categoryId: string) => {
+  const toggleCategory = useCallback((categoryId: string) => {
     if (selectedCategories.includes(categoryId)) {
       onCategoriesChange(selectedCategories.filter(id => id !== categoryId));
     } else {
       onCategoriesChange([...selectedCategories, categoryId]);
     }
-  };
+  }, [selectedCategories, onCategoriesChange]);
 
-  const hasActiveFilters = selectedDate || selectedCategories.length > 0;
+  const hasActiveFilters = useMemo(() => selectedDate || selectedCategories.length > 0, [selectedDate, selectedCategories]);
 
   return (
     <>

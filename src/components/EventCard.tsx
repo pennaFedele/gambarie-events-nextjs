@@ -75,7 +75,6 @@ export const EventCard = ({ event, variant = "current" }: EventCardProps) => {
   };
   
   const thumbnailUrl = getThumbnailUrl(event.image_url);
-  const isPast = variant === "past";
 
   const handleAddToCalendar = () => {
     const calendarEvent = {

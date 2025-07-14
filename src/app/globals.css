@@ -55,7 +55,7 @@ Palette ispirata ai colori mediterranei di Gambarie
     --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
     
     /* Nuove categorie colori per Gambarie */
-    --gastronomia: 45 100% 60%;        /* Giallo */
+    --gastronomia: 52 40% 49%;        /* Giallo */
     --cultura: 340 75% 45%;            /* Amaranto */ 
     --musica: 270 60% 55%;             /* Viola */
     --natura: 120 50% 45%;             /* Verde */

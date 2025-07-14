@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+// Calendar utility functions
 
 interface CalendarEvent {
   title: string;
