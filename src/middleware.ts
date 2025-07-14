@@ -41,7 +41,12 @@ export async function middleware(request: NextRequest) {
 
   // IMPORTANT: This refreshes the session and is required for server components
   // to have access to the session
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  
+  if (process.env.NODE_ENV === 'production') {
+    console.log('PROD Middleware - getUser result:', { user: user?.id, error: userError });
+    console.log('PROD Middleware - Cookies:', Object.keys(request.cookies.getAll()));
+  }
 
   // Check if user is admin
   let isAdmin = false;
