@@ -38,9 +38,22 @@ export async function middleware(request: NextRequest) {
   // to have access to the session
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Skip maintenance check for authenticated users - they can always access
-  // But redirect them to home if they try to access maintenance page
+  // Check if user is admin
+  let isAdmin = false;
   if (user) {
+    const { data: adminData, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id)
+      .eq('role', 'admin')
+      .single();
+    
+    isAdmin = !!adminData && !error;
+  }
+
+  // Skip maintenance check for admin users - they can always access
+  // But redirect them to home if they try to access maintenance page
+  if (user && isAdmin) {
     const isMaintenanceRoute = request.nextUrl.pathname === '/maintenance';
     if (isMaintenanceRoute) {
       return NextResponse.redirect(new URL('/', request.url));
@@ -48,7 +61,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // For anonymous users, check maintenance mode
+  // For authenticated non-admin users and anonymous users, check maintenance mode
   const { data: appSettings } = await supabase
     .from('app_settings')
     .select('setting_key, setting_value')
@@ -56,11 +69,11 @@ export async function middleware(request: NextRequest) {
 
   const isPublic = appSettings?.find(s => s.setting_key === 'app_public_visible')?.setting_value === true;
 
-  // Allow access to auth and maintenance routes even for anonymous users
+  // Allow access to auth and maintenance routes
   const isAuthRoute = request.nextUrl.pathname === '/auth';
   const isMaintenanceRoute = request.nextUrl.pathname === '/maintenance';
 
-  // If site is not public and user is anonymous, redirect to maintenance
+  // If site is not public and user is not admin, redirect to maintenance
   if (!isPublic && !isAuthRoute && !isMaintenanceRoute) {
     const maintenanceUrl = new URL('/maintenance', request.url);
     
