@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { getCachedEventCount } from '@/lib/cache/events';
@@ -29,9 +30,14 @@ export default async function Home() {
       
       {/* Hero Section with Server-Side Rendered Data */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(/hero.png)` }}
+        <Image
+          src="/assets/hero.png"
+          alt="Gambarie d'Aspromonte - Panorama montano"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+          quality={85}
         />
         <div className="relative z-10 text-center text-white max-w-4xl mx-auto px-6 sm:px-8 md:px-4">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white">
