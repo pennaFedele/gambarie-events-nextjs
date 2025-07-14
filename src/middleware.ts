@@ -39,7 +39,12 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Skip maintenance check for authenticated users - they can always access
+  // But redirect them to home if they try to access maintenance page
   if (user) {
+    const isMaintenanceRoute = request.nextUrl.pathname === '/maintenance';
+    if (isMaintenanceRoute) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
     return response;
   }
 
@@ -74,7 +79,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(maintenanceUrl);
   }
 
-  // If site is public and user tries to access maintenance page, redirect to home
+  // If site is public and anonymous user tries to access maintenance page, redirect to home
   if (isPublic && isMaintenanceRoute) {
     return NextResponse.redirect(new URL('/', request.url));
   }
