@@ -54,7 +54,7 @@ export default async function Activities() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>Gambarie d'Aspromonte - Reggio Calabria</span>
+                <span>Gambarie d&apos;Aspromonte - Reggio Calabria</span>
               </div>
             </div>
           </div>

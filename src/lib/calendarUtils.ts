@@ -12,6 +12,13 @@ interface CalendarEvent {
 
 export const generateCalendarFile = (event: CalendarEvent) => {
   const startDateTime = new Date(`${event.startDate}T${event.time}`);
+  
+  // Validate date before processing
+  if (isNaN(startDateTime.getTime())) {
+    console.error('Invalid date in calendar event:', event.startDate, event.time);
+    return '';
+  }
+  
   const endDateTime = new Date(startDateTime.getTime() + 2 * 60 * 60 * 1000); // Default 2 hours duration
   
   const formatDate = (date: Date) => {
@@ -49,6 +56,13 @@ export const downloadCalendarFile = (event: CalendarEvent) => {
 
 export const generateGoogleCalendarUrl = (event: CalendarEvent) => {
   const startDateTime = new Date(`${event.startDate}T${event.time}`);
+  
+  // Validate date before processing
+  if (isNaN(startDateTime.getTime())) {
+    console.error('Invalid date in Google calendar event:', event.startDate, event.time);
+    return '';
+  }
+  
   const endDateTime = new Date(startDateTime.getTime() + 2 * 60 * 60 * 1000);
   
   const formatGoogleDate = (date: Date) => {

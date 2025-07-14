@@ -59,7 +59,12 @@ export async function middleware(request: NextRequest) {
   if (!isPublic && !isAuthRoute && !isMaintenanceRoute) {
     const maintenanceUrl = new URL('/maintenance', request.url);
     
-    // Pass maintenance settings as search params
+    // Preserve existing search params
+    request.nextUrl.searchParams.forEach((value, key) => {
+      maintenanceUrl.searchParams.set(key, value);
+    });
+    
+    // Pass maintenance settings as search params (override if exist)
     const maintenanceMessage = appSettings?.find(s => s.setting_key === 'maintenance_message')?.setting_value || 'Stiamo lavorando per Voi. App in aggiornamento';
     const adminButtonText = appSettings?.find(s => s.setting_key === 'maintenance_admin_button_text')?.setting_value || 'Sei admin? Accedi';
     

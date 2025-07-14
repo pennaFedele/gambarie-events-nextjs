@@ -84,6 +84,11 @@ export const LongEventCard = ({ event }: LongEventCardProps) => {
     const startDate = new Date(event.start_date);
     const endDate = new Date(event.end_date);
     
+    // Validate dates before formatting
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return `${event.start_date} - ${event.end_date}`;
+    }
+    
     if (event.start_date === event.end_date) {
       return format(startDate, 'EEEE d MMMM yyyy', { locale: dateLocale });
     }
