@@ -141,7 +141,17 @@ export const EventCard = ({ event, variant = "current" }: EventCardProps) => {
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <CalendarDays className="w-4 h-4" />
-              <span>{event.date && !isNaN(new Date(event.date).getTime()) ? format(new Date(event.date), "dd MMM yyyy", { locale: dateLocale }) : event.date}</span>
+              <span>{event.date ? (() => {
+                try {
+                  const dateObj = new Date(event.date);
+                  if (!isNaN(dateObj.getTime())) {
+                    return format(dateObj, "dd MMM yyyy", { locale: dateLocale });
+                  }
+                  return event.date;
+                } catch {
+                  return event.date;
+                }
+              })() : '--'}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="w-4 h-4" />

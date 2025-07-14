@@ -47,15 +47,7 @@ export default function Auth() {
 
   useEffect(() => {
     if (user) {
-      // Preserve UTM parameters when redirecting after login
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmParams = Array.from(urlParams.entries())
-        .filter(([key]) => key.startsWith('utm_'))
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join('&');
-      
-      const redirectPath = utmParams ? `/?${utmParams}` : '/';
-      router.push(redirectPath);
+      router.push('/');
     }
   }, [user, router]);
 
@@ -101,15 +93,7 @@ export default function Auth() {
 
       if (error) throw error;
       
-      // Preserve UTM parameters when redirecting after login
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmParams = Array.from(urlParams.entries())
-        .filter(([key]) => key.startsWith('utm_'))
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join('&');
-      
-      const redirectPath = utmParams ? `/?${utmParams}` : '/';
-      router.push(redirectPath);
+      router.push('/');
     } catch (error: unknown) {
       const errorMessage = (error as { message?: string })?.message || 'Errore sconosciuto';
       toast({
@@ -158,16 +142,7 @@ export default function Auth() {
     setIsLoading(true);
 
     try {
-      // Preserve UTM parameters in email redirect URL for sign up
-      const urlParams = new URLSearchParams(window.location.search);
-      const utmParams = Array.from(urlParams.entries())
-        .filter(([key]) => key.startsWith('utm_'))
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join('&');
-      
-      const redirectUrl = utmParams ? 
-        `${window.location.origin}/?${utmParams}` : 
-        `${window.location.origin}/`;
+      const redirectUrl = `${window.location.origin}/`;
       
       const authOptions: {
         emailRedirectTo: string;

@@ -56,20 +56,22 @@ export const CACHE_TAGS = {
 export const getCachedEvents = unstable_cache(
   async (showPast = false, limit = 20, offset = 0): Promise<Event[]> => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
     
     let query = supabase
       .from('events')
       .select('*');
     
     if (showPast) {
+      // Past events: only events before today (not including today)
       query = query
-        .lt('event_date', today.toISOString().split('T')[0])
+        .lt('event_date', todayStr)
         .order('event_date', { ascending: false })
         .order('event_time', { ascending: false });
     } else {
+      // Current/future events: events from today onwards
       query = query
-        .gte('event_date', today.toISOString().split('T')[0])
+        .gte('event_date', todayStr)
         .order('event_date', { ascending: true })
         .order('event_time', { ascending: true });
     }

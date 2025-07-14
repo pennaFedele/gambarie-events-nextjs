@@ -105,7 +105,18 @@ export function ClientHomePage() {
               {filteredCurrentEvents.map((event) => (
                 <EventCardComponent
                   key={event.id}
-                  event={event as any}
+                  event={{
+                    ...event,
+                    description: event.description || '',
+                    description_en: event.description_en || undefined,
+                    title_en: event.title_en || undefined,
+                    organizer_en: event.organizer_en || undefined,
+                    location_en: event.location_en || undefined,
+                    external_link: event.external_link || undefined,
+                    image_url: event.image_url || undefined,
+                    date: event.event_date,
+                    time: event.event_time
+                  }}
                 />
               ))}
             </div>

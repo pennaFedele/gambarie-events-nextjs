@@ -17,15 +17,7 @@ export function MaintenancePage({
   const { t } = useTranslation();
 
   const handleAdminLogin = () => {
-    // Preserve UTM parameters when navigating to auth
-    const urlParams = new URLSearchParams(window.location.search);
-    const utmParams = Array.from(urlParams.entries())
-      .filter(([key]) => key.startsWith('utm_'))
-      .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-      .join('&');
-    
-    const authPath = utmParams ? `/auth?${utmParams}` : '/auth';
-    router.push(authPath);
+    router.push('/auth');
   };
 
   return (
