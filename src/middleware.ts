@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(request: NextRequest) {
+  if (process.env.NODE_ENV === 'production') {
+    console.log('PROD Middleware - Request URL:', request.url);
+    console.log('PROD Middleware - Pathname:', request.nextUrl.pathname);
+  }
+  
   const response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -67,10 +72,17 @@ export async function middleware(request: NextRequest) {
   if (user && isAdmin) {
     if (process.env.NODE_ENV === 'production') {
       console.log('PROD Middleware - Admin user detected, bypassing maintenance');
+      console.log('PROD Middleware - About to return response for admin user');
     }
     const isMaintenanceRoute = request.nextUrl.pathname === '/maintenance';
     if (isMaintenanceRoute) {
+      if (process.env.NODE_ENV === 'production') {
+        console.log('PROD Middleware - Admin on maintenance page, redirecting to home');
+      }
       return NextResponse.redirect(new URL('/', request.url));
+    }
+    if (process.env.NODE_ENV === 'production') {
+      console.log('PROD Middleware - Admin user accessing:', request.nextUrl.pathname);
     }
     return response;
   }
@@ -89,6 +101,17 @@ export async function middleware(request: NextRequest) {
 
   // If site is not public and user is not admin, redirect to maintenance
   if (!isPublic && !isAuthRoute && !isMaintenanceRoute) {
+    if (process.env.NODE_ENV === 'production') {
+      console.log('PROD Middleware - Redirecting to maintenance:', {
+        isPublic,
+        hasUser: !!user,
+        isAdmin,
+        pathname: request.nextUrl.pathname,
+        isAuthRoute,
+        isMaintenanceRoute
+      });
+    }
+    
     const maintenanceUrl = new URL('/maintenance', request.url);
     
     // Preserve existing search params
