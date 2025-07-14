@@ -2,11 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(request: NextRequest) {
-  if (process.env.NODE_ENV === 'production') {
-    console.log('PROD Middleware - Request URL:', request.url);
-    console.log('PROD Middleware - Pathname:', request.nextUrl.pathname);
-  }
-  
   const response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -41,12 +36,7 @@ export async function middleware(request: NextRequest) {
 
   // IMPORTANT: This refreshes the session and is required for server components
   // to have access to the session
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  
-  if (process.env.NODE_ENV === 'production') {
-    console.log('PROD Middleware - getUser result:', { user: user?.id, error: userError });
-    console.log('PROD Middleware - Cookies:', Object.keys(request.cookies.getAll()));
-  }
+  const { data: { user } } = await supabase.auth.getUser();
 
   // Check if user is admin
   let isAdmin = false;
@@ -58,36 +48,15 @@ export async function middleware(request: NextRequest) {
       .eq('role', 'admin')
       .single();
     
-    // Production debug logging
-    if (process.env.NODE_ENV === 'production') {
-      console.log('PROD Middleware - User ID:', user.id);
-      console.log('PROD Middleware - Admin query result:', adminData);
-      console.log('PROD Middleware - Admin query error:', error);
-      console.log('PROD Middleware - Environment check:', {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'NOT SET',
-        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'NOT SET'
-      });
-    }
-    
     isAdmin = !!adminData && !error;
   }
 
   // Skip maintenance check for admin users - they can always access
   // But redirect them to home if they try to access maintenance page
   if (user && isAdmin) {
-    if (process.env.NODE_ENV === 'production') {
-      console.log('PROD Middleware - Admin user detected, bypassing maintenance');
-      console.log('PROD Middleware - About to return response for admin user');
-    }
     const isMaintenanceRoute = request.nextUrl.pathname === '/maintenance';
     if (isMaintenanceRoute) {
-      if (process.env.NODE_ENV === 'production') {
-        console.log('PROD Middleware - Admin on maintenance page, redirecting to home');
-      }
       return NextResponse.redirect(new URL('/', request.url));
-    }
-    if (process.env.NODE_ENV === 'production') {
-      console.log('PROD Middleware - Admin user accessing:', request.nextUrl.pathname);
     }
     return response;
   }
@@ -106,17 +75,6 @@ export async function middleware(request: NextRequest) {
 
   // If site is not public and user is not admin, redirect to maintenance
   if (!isPublic && !isAuthRoute && !isMaintenanceRoute) {
-    if (process.env.NODE_ENV === 'production') {
-      console.log('PROD Middleware - Redirecting to maintenance:', {
-        isPublic,
-        hasUser: !!user,
-        isAdmin,
-        pathname: request.nextUrl.pathname,
-        isAuthRoute,
-        isMaintenanceRoute
-      });
-    }
-    
     const maintenanceUrl = new URL('/maintenance', request.url);
     
     // Preserve existing search params
